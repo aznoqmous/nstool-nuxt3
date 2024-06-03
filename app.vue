@@ -17,7 +17,6 @@
     <div class="mt-5 flex items-center text-xl text-primary-400" v-if="currentDomain">
       <UIcon name="i-heroicons-link" />
       <ULink
-      
       :to="'http://'+state.url"
       target="_blank"
       >
@@ -134,13 +133,23 @@ const nslookup = async(url)=>{
         url
       }
     })
-    res = res.map(row => ({
-      type: row.type,
-      value: row.value || row.address || row.exchange || row.entries.join(' '),
-      tll: row.ttl,
+    const recs = []
+
+    res.map(field => field.entries.map(row => recs.push({
+      type: field.type,
+      value: row.value || row.address || row.exchange || (row.entries && row.entries.join && row.entries.join(' ')) || (row.join && row.join(' ')) || row,
+      ttl: row.ttl,
       priority: row.priority
-    }))
-    records.value = res
+    })))
+    
+    console.log(res)
+    // res = res.map(row => ({
+    //   type: row.type,
+    //   value: row.value || row.address || row.exchange || row.entries.join(' '),
+    //   ttl: row.ttl,
+    //   priority: row.priority
+    // }))
+    records.value = recs
   }
   catch(error){
     console.error(error)
